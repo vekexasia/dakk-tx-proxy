@@ -1,7 +1,10 @@
-# Dakk TX Signing proxy
+# dPoS API Fallback
 
-Easy peasy dropin to use dakk pool system.
+Easy peasy micro-server to add support to deprecated API methods.
 
+Currently supported deprecated methods:
+
+ - RISE: /api/transactions [POST] used in most pool systems.
 
 ## Prerequisites:
 
@@ -11,8 +14,8 @@ Have nodejs (v6 or superior) installed
 ## Installation:
 
 ```
-git clone https://github.com/vekexasia/dakk-tx-proxy.git
-cd dakk-tx-proxy
+git clone https://github.com/vekexasia/dpos-api-fallback.git
+cd dpos-api-fallback
 npm i
 npm run package
 ```
