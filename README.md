@@ -39,7 +39,7 @@ npm run package
 Example usage with official node wallet.
 
 ```
-node dist/index.ts start -n https://wallet.rise.vision -s R
+node dist/index.js start -n https://wallet.rise.vision -s R
 
 ```
 
