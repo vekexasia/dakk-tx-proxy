@@ -29,6 +29,7 @@ const startCommand = commander.command('start')
     // Starting server
     const app = express();
     app.use(bodyParser.urlencoded({extended: true, limit: '2mb', parameterLimit: 5000}))
+    app.use(bodyParser.json({limit: '2mb'}));
 
     useExpressServer(app, {
       controllers: [ApiProxy],
