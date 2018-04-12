@@ -1,4 +1,4 @@
-import { Body, BodyParam, JsonController, Post, QueryParam } from 'routing-controllers';
+import { Body, BodyParam, JsonController, Put, QueryParam } from 'routing-controllers';
 import { LiskWallet, SendTx } from 'dpos-offline';
 import * as moment from 'moment';
 import {configObj} from './configObj';
@@ -10,7 +10,7 @@ export class ApiProxy {
   private dposAPI: APIWrapper = dposAPI.newWrapper(configObj.broadcastNodeAddress);
 
 
-  @Post('/transactions')
+  @Put('/transactions')
   public async postTransactions(
     @BodyParam('secret') secret: string = '',
     @BodyParam('amount') amount: number = -1,
