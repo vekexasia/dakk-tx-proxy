@@ -4,7 +4,9 @@ Easy peasy micro-server to add support to deprecated API methods.
 
 Currently supported deprecated methods:
 
- - RISE: /api/transactions [POST] used in most pool systems.
+ - RISE: /api/transactions [PUT] used in most pool systems.
+ - RISE: /api/accounts/open [POST] offline creates a new account from given secret.
+ - RISE: /api/accounts/generatePublicKey [POST] offline creates a new account from given secret. Returns publicKey.
 
 ## Prerequisites:
 
@@ -28,7 +30,8 @@ npm run package
   Options:
 
     -s, --suffix <suffix>  Address Suffix (R for Rise) (default: R)
-    -n, --node <node>      Original node address to broadcast transactions to
+    -p, --port <port>      Proxy port (default: 6990)
+    -n, --node <node>      Original node address to broadcast transactions to (default: )
     -h, --help             output usage information
 
 ```
@@ -46,19 +49,6 @@ node dist/index.js start -n https://wallet.rise.vision -s R
 ## Ok What now in dakk pool script?
 
 Set your node server to `http://localhost:6990` and launch this with the command shown above before launching dakk script.
-
-
-
-## FAQ
-
-I see errors in the console such as
-```
-no native wasm support detected
-no binaryen method succeeded. consider enabling more options, like interpreting, if you want that: https://github.com/kripken/emscripten/wiki/WebAssembly#binaryen-methods
-no binaryen method succeeded. consider enabling more options, like interpreting, if you want that: https://github.com/kripken/emscripten/wiki/WebAssembly#binaryen-methods
-```
-
-^^ totally fine. If you want you could `npm i sodium` if you have the necessary prerequisites installed.
 
 
 ## LICENSE

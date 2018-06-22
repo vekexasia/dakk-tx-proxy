@@ -11,6 +11,7 @@ import * as commander from 'commander';
 
 const startCommand = commander.command('start')
   .option('-s, --suffix <suffix>', 'Address Suffix (R for Rise)', 'R')
+  .option('-p, --port <port>', 'Proxy port', (v) => parseInt(v),6990)
   .option('-n, --node <node>', 'Original node address to broadcast transactions to', '')
   .action((args) => {
     if (is.empty(args.node)) {
@@ -37,8 +38,8 @@ const startCommand = commander.command('start')
 
     app.use(httpProxy({ target: configObj.broadcastNodeAddress, changeOrigin: true }));
 
-    app.listen(6990, () => {
-      console.log('Listening and proxying.');
+    app.listen(args.port, 'localhost', () => {
+      console.log(`Listening on 127.0.0.1:${args.port} and proxying to ${args.node}`);
     });
   });
 
