@@ -42,9 +42,10 @@ npm run package
 Example usage with official node wallet.
 
 ```
-node dist/index.js start -n https://wallet.rise.vision -s R
+npm start -- -n https://wallet.rise.vision -s R
 
 ```
+
 
 ## Ok What now in dakk pool script?
 
