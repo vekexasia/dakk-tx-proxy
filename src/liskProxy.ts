@@ -5,7 +5,6 @@ import { configObj } from './configObj';
 import * as is from 'is_js';
 import axios from 'axios';
 
-
 @JsonController('/api')
 export class LiskApiProxy {
 
@@ -29,11 +28,12 @@ export class LiskApiProxy {
         amount : 'Amount not provided or negative'
       }
     }
+    const {data} = await axios.get(`${configObj.broadcastNodeAddress}/api/node/constants`);
+    const fee        = parseInt(data.data.fees.send, 10);
 
-    const {data} = await axios.get(`${configObj.broadcastNodeAddress}/node/constants`);
-    const {fee}        = data.data.fees.send;
     const firstWallet  = new LiskWallet(secret, configObj.addressSuffix);
     const secondWallet = is.empty(secondSecret) ? undefined : new LiskWallet(secondSecret, configObj.addressSuffix);
+
 
     const sendTx = new SendTx()
       .withAmount(amount)
@@ -47,13 +47,19 @@ export class LiskApiProxy {
         secondWallet
       );
 
-    const {status, data: resData} = await axios.post(`${configObj.broadcastNodeAddress}/node/constants`, broadcastableTransaction);
-
-    if (status === 200) {
-      return { success: true, transactionId: broadcastableTransaction.id};
-    } else {
-      return { success: false, resData };
+    broadcastableTransaction.amount = `${broadcastableTransaction.amount}` as any;
+    broadcastableTransaction.fee = `${broadcastableTransaction.fee}` as any;
+    try {
+      const {status, data: resData} = await axios.post(`${configObj.broadcastNodeAddress}/api/transactions`, broadcastableTransaction);
+      if (status === 200) {
+        return { success: true, transactionId: broadcastableTransaction.id};
+      } else {
+        return { success: false, resData };
+      }
+    } catch (e) {
+      return {success: false, error: e.message};
     }
+
   }
 
   @Post('/accounts/open')
