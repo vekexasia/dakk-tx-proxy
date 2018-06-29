@@ -14,6 +14,7 @@ const startCommand = commander.command('start')
   .option('-s, --suffix <suffix>', 'Address Suffix (R for Rise)', 'R')
   .option('-p, --port <port>', 'Proxy port', (v) => parseInt(v), 6990)
   .option('-n, --node <node>', 'Original node address to broadcast transactions to', '')
+  .option('-i, --ip <ip>', 'IP To listen from', 'localhost')
   .action((args) => {
     if (is.empty(args.node)) {
       startCommand.outputHelp();
@@ -46,8 +47,8 @@ const startCommand = commander.command('start')
 
     app.use(httpProxy({ target: configObj.broadcastNodeAddress, changeOrigin: true }));
 
-    app.listen(args.port, 'localhost', () => {
-      console.log(`Listening on 127.0.0.1:${args.port} and proxying to ${args.node}`);
+    app.listen(args.port, args.ip, () => {
+      console.log(`Listening on ${args.ip}:${args.port} and proxying to ${args.node}`);
     });
   });
 
