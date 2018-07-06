@@ -7,7 +7,7 @@ import * as is from 'is_js';
 
 @JsonController('/api')
 export class ApiProxy {
-  private dposAPI: APIWrapper = dposAPI.newWrapper(configObj.broadcastNodeAddress);
+  private dposAPI: APIWrapper = dposAPI.newWrapper(configObj.broadcastNodeAddress, {timeout: configObj.timeout});
 
 
   @Put('/transactions')
@@ -31,25 +31,28 @@ export class ApiProxy {
       }
     }
 
+    try {
+      const { fee }      = await this.dposAPI.blocks.getFee();
+      const firstWallet  = new LiskWallet(secret, configObj.addressSuffix);
+      const secondWallet = is.empty(secondSecret) ? undefined : new LiskWallet(secondSecret, configObj.addressSuffix);
 
-    const {fee}        = await this.dposAPI.blocks.getFee();
-    const firstWallet  = new LiskWallet(secret, configObj.addressSuffix);
-    const secondWallet = is.empty(secondSecret) ? undefined : new LiskWallet(secondSecret, configObj.addressSuffix);
+      const sendTx = new SendTx()
+        .withAmount(amount)
+        .withFees(fee)
+        .withTimestamp(moment.utc().diff(Date.UTC(2016, 4, 24, 17, 0, 0, 0), 'seconds'))
+        .withRecipientId(recipientId);
 
-    const sendTx = new SendTx()
-      .withAmount(amount)
-      .withFees(fee)
-      .withTimestamp(moment.utc().diff(Date.UTC(2016, 4, 24, 17, 0, 0, 0), 'seconds'))
-      .withRecipientId(recipientId);
-
-    const broadcastableTransaction = firstWallet
-      .signTransaction(
-        sendTx,
-        secondWallet
-      );
-    const transport                = await this.dposAPI.buildTransport();
-    const res = await transport.postTransaction(broadcastableTransaction);
-    return {... res, transactionId: broadcastableTransaction.id};
+      const broadcastableTransaction = firstWallet
+        .signTransaction(
+          sendTx,
+          secondWallet
+        );
+      const transport                = await this.dposAPI.buildTransport();
+      const res                      = await transport.postTransaction(broadcastableTransaction);
+      return { ...res, transactionId: broadcastableTransaction.id };
+    } catch (e) {
+      return { success: false, error: e.message };
+    }
   }
 
   @Post('/accounts/open')

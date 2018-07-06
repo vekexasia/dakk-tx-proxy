@@ -28,7 +28,12 @@ export class LiskApiProxy {
         amount : 'Amount not provided or negative'
       }
     }
-    const {data} = await axios.get(`${configObj.broadcastNodeAddress}/api/node/constants`);
+    const { data } = await axios.get(
+      `${configObj.broadcastNodeAddress}/api/node/constants`,
+      {
+        timeout: configObj.timeout
+      }
+    );
     const fee        = parseInt(data.data.fees.send, 10);
 
     const firstWallet  = new LiskWallet(secret, configObj.addressSuffix);
@@ -50,7 +55,13 @@ export class LiskApiProxy {
     broadcastableTransaction.amount = `${broadcastableTransaction.amount}` as any;
     broadcastableTransaction.fee = `${broadcastableTransaction.fee}` as any;
     try {
-      const {status, data: resData} = await axios.post(`${configObj.broadcastNodeAddress}/api/transactions`, broadcastableTransaction);
+      const { status, data: resData } = await axios.post(
+        `${configObj.broadcastNodeAddress}/api/transactions`,
+        broadcastableTransaction,
+        {
+          timeout: configObj.timeout
+        }
+      );
       if (status === 200) {
         return { success: true, transactionId: broadcastableTransaction.id};
       } else {
